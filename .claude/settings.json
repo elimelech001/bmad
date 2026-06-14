@@ -1,4 +1,11 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "PowerShell(*)"
+    ],
+    "defaultMode": "bypassPermissions"
+  },
   "hooks": {
     "Stop": [
       {

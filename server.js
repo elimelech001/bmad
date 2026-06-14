@@ -5,10 +5,14 @@ const http = require('http');
 const port = parseInt(process.env.PORT, 10) || 3000;
 
 const server = http.createServer((req, res) => {
-  // Route handling goes here — Story 2.1 and 2.2 will add actual routes
-  // For now, a minimal handler that keeps the server alive is sufficient
-  res.writeHead(404);
-  res.end('Not found');
+  if (req.method === 'GET' && req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hello World');
+  } else {
+    // Default: 404 — Story 2.2 will add /test here
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not found');
+  }
 });
 
 // Prevent unhandled 'error' events from crashing the process (AC: #1, #5)

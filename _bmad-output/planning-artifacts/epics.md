@@ -22,17 +22,17 @@ FR3: The server can be started with a single command (`npm start`) and begins ac
 
 ### NonFunctional Requirements
 
-NFR1: Implementation must use Node.js with Express (or equivalent minimal HTTP framework) as the only runtime dependency.
+NFR1: Implementation must use Node.js with its built-in `node:http` module. No runtime framework dependencies are required — the `dependencies` block in `package.json` is empty. [Updated post-Epic-1: architecture decision chose zero-dependency node:http over Express]
 
 NFR2: All dependencies must be installable via a single `npm install` command with no errors.
 
 NFR3: The server process must remain alive after startup (no crash-on-start). `console.log` is acceptable for all logging (no logging library required).
 
-NFR4: No authentication, authorization, database connectivity, or persistent storage is required. Error handling beyond Express defaults is out of scope.
+NFR4: No authentication, authorization, database connectivity, or persistent storage is required. Error handling beyond Node.js HTTP server defaults is out of scope. [Updated post-Epic-1: replaced Express reference with node:http]
 
 ### Additional Requirements
 
-- No architecture document was provided; no additional architecture-driven requirements apply.
+- Architecture document (`_bmad-output/planning-artifacts/architecture.md`) is authoritative. Specifically: node:http built-in (no Express), empty dependencies, flat file structure (server.js at project root), CommonJS module system.
 - The PRD explicitly excludes: HTTPS/TLS, hot reload, process managers (PM2, forever), `.env` file support, automated test suite, Docker/deployment config, and any routes beyond `GET /` and `GET /test`.
 
 ### UX Design Requirements
@@ -69,28 +69,32 @@ A developer can clone the repo, run `npm install`, and then `npm start` to get a
 ### Story 1.1: Initialize Node.js Project
 
 As a developer,
-I want a `package.json` with the correct metadata, start script, and Express dependency declared,
-So that I can install all dependencies with a single `npm install` and the project is ready to run.
+I want a `package.json` with the correct metadata, start script, and an empty dependencies block,
+So that I can run `npm install` (which installs nothing) and the project is ready to run.
 
 **Acceptance Criteria:**
 
 **Given** I am in the project root directory
 **When** I inspect `package.json`
 **Then** it contains `name`, `version`, `main`, and `scripts.start` fields
-**And** `express` is listed under `dependencies`
+**And** `dependencies` is an empty object `{}` (no Express, no external packages)
 
 **Given** a freshly cloned repo with no `node_modules`
 **When** I run `npm install`
 **Then** the command completes with exit code 0 and no errors printed to stderr
-**And** `node_modules/express` exists on disk
+**And** no packages are downloaded (zero-dependency project)
+
+[Updated post-Epic-1: architecture mandates node:http built-in with zero runtime dependencies — Express references removed]
 
 ---
 
 ### Story 1.2: Bootstrap HTTP Server
 
 As a developer,
-I want an entry point file that creates an Express app and starts listening on a configurable port,
+I want an entry point file (`server.js`) that uses Node.js built-in `node:http` to create an HTTP server and starts listening on a configurable port,
 So that running `npm start` brings up a live HTTP server that stays alive and tells me which port it is on.
+
+[Updated post-Epic-1: uses node:http (no Express), server.js at project root — not src/index.js]
 
 **Acceptance Criteria:**
 

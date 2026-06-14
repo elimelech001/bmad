@@ -87,7 +87,7 @@ Developer (or any HTTP client) can send `GET /test` and receive a JSON object wi
 
 ### 4.3 Server Bootstrap
 
-**Description:** The server must start on a configurable port (default `3000`) and log a startup message to stdout. No framework opinion is mandated, but Express is the assumed default given familiarity. Realizes UJ-1.
+**Description:** The server must start on a configurable port (default `3000`) and log a startup message to stdout. No framework is used — implementation uses Node.js built-in `node:http` module with zero runtime dependencies. Realizes UJ-1. [Updated post-Epic-1: Express assumption resolved; zero-dependency node:http chosen by architecture]
 
 **Functional Requirements:**
 
@@ -114,7 +114,7 @@ The server can be started with a single command (`npm start`) and begins accepti
 - More than two application routes in v1.
 - A frontend or UI.
 - Deployment configuration (Docker, cloud, CI/CD).
-- Error handling beyond Express defaults.
+- Error handling beyond Node.js HTTP server defaults. [Updated post-Epic-1: no Express in use]
 - Automated test suite (the BMAD QA step can add this as a follow-on story if desired).
 
 ---
@@ -124,7 +124,7 @@ The server can be started with a single command (`npm start`) and begins accepti
 ### 6.1 In Scope
 
 - Node.js project scaffold (`package.json`, entry point).
-- Express (or equivalent minimal HTTP framework) as the only dependency.
+- Zero runtime dependencies — Node.js built-in `node:http` module only. [Updated post-Epic-1: Express dropped; zero-dependency approach implemented]
 - `GET /` → `Hello World` (plain text, 200).
 - `GET /test` → JSON payload with `status`, `message`, `timestamp` (200).
 - Server listens on `PORT` env var or `3000` by default.
@@ -158,7 +158,7 @@ The server can be started with a single command (`npm start`) and begins accepti
 ## 9. Assumptions Index
 
 - [ASSUMPTION §4.2] The `timestamp` field is generated server-side at request time using `new Date().toISOString()` — no client clock or timezone inference required.
-- [ASSUMPTION §4.3] Express is the HTTP framework. If a no-dependency implementation is preferred, FR-3 consequences remain the same but the story implementation changes.
+- [ASSUMPTION §4.3 — RESOLVED post-Epic-1] The no-dependency implementation was chosen: Node.js built-in `node:http` module, zero runtime dependencies. FR-3 consequences are unchanged — the server starts, logs port, accepts connections.
 
 ---
 
@@ -168,7 +168,7 @@ The server can be started with a single command (`npm start`) and begins accepti
 
 ### Epic 1: Project Setup & Infrastructure
 
-**Epic Goal:** Establish a runnable Node.js project with a single-command startup and the selected HTTP framework installed.
+**Epic Goal:** Establish a runnable Node.js project with a single-command startup using Node.js built-in `node:http` (no external framework). [Updated post-Epic-1]
 
 ---
 
@@ -177,8 +177,8 @@ As a developer, I can run `npm install` in the project root so that all dependen
 
 Acceptance criteria:
 - `package.json` exists with `name`, `version`, `main`, and `scripts.start` defined.
-- `express` is listed as a dependency.
-- Running `npm install` completes without errors.
+- `dependencies` block is empty `{}` — no Express, no external packages. [Updated post-Epic-1]
+- Running `npm install` completes without errors (installs nothing — validates package.json only).
 
 ---
 
@@ -186,10 +186,11 @@ Acceptance criteria:
 As a developer, I can run `npm start` so that an HTTP server starts on port 3000 (or `$PORT`) and prints a startup message to stdout.
 
 Acceptance criteria:
-- Entry point file (e.g., `src/index.js` or `index.js`) exists and is referenced by `scripts.start`.
+- Entry point file `server.js` at project root exists and is referenced by `scripts.start`. [Updated post-Epic-1: flat structure, no src/ folder]
 - Server binds to `process.env.PORT || 3000`.
-- Startup log includes the active port number.
+- Startup log includes the active port number (format: `Listening on http://localhost:<port>`).
 - Running `npm start` exits without errors and the process stays alive.
+- Graceful shutdown on SIGTERM/SIGINT via `server.close()` + `closeAllConnections()`.
 
 ---
 

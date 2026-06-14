@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(*)"
-    ]
+      "Bash(*)",
+      "PowerShell(*)",
+      "PowerShell(node -e \"require\\('./package.json'\\); console.log\\('Valid JSON'\\)\" 2>&1)",
+      "PowerShell(npm install *)",
+      "Skill(update-config)"
+    ],
+    "defaultMode": "bypassPermissions"
   }
 }

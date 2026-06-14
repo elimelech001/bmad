@@ -45,8 +45,8 @@ development_status:
   epic-1: in-progress
   1-1-initialize-node-js-project: done
   1-2-bootstrap-http-server: done
-  epic-1-retrospective: optional
-  epic-2: backlog
-  2-1-hello-world-route: backlog
+  epic-1-retrospective: done
+  epic-2: in-progress
+  2-1-hello-world-route: review
   2-2-test-payload-route: backlog
   epic-2-retrospective: optional

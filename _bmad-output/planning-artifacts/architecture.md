@@ -52,7 +52,7 @@ project-root/
 ### GET /test
 - **Response:** `200 OK`
 - **Content-Type:** `application/json`
-- **Body:** `{ "status": "ok", "message": "test payload" }`
+- **Body:** `{ "status": "ok", "message": "Test payload", "timestamp": "<ISO 8601 string>" }` [Updated post-Epic-1: capitalized "Test payload" to match PRD FR-2; added timestamp field per FR-2]
 
 All other paths → `404 Not Found`.
 
@@ -105,5 +105,5 @@ Server logs `Listening on http://localhost:3000` to stdout on startup.
 npm install   # installs nothing — but validates package.json is well-formed
 npm start     # node server.js → logs port, accepts connections
 curl localhost:3000        # → Hello World
-curl localhost:3000/test   # → {"status":"ok","message":"test payload"}
+curl localhost:3000/test   # → {"status":"ok","message":"Test payload","timestamp":"<ISO 8601>"}
 ```
