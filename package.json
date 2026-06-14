@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test \"_bmad-output/implementation-artifacts/tests/**/*.test.js\"",
+    "test:watch": "node --test --watch \"_bmad-output/implementation-artifacts/tests/**/*.test.js\""
   },
   "dependencies": {}
 }
