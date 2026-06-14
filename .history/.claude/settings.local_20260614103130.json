@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "*",
+            "Bash(*)",
+
+      "Bash(python3 _bmad/scripts/resolve_customization.py --skill \".claude/skills/bmad-prd\" --key workflow)"
+    ]
+  }
+}

@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─── Lint ────────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Add your linter here (e.g. eslint). No-op until a linter is configured.
+      - name: Lint
+        run: node --version   # placeholder — replace with: npx eslint .
+
+  # ─── Test ────────────────────────────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: lint
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['20', '22', '24']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --reporter=tap 2>&1 | tee test-results-node${{ matrix.node-version }}.tap; npm test
+        # node:test exits non-zero on failure — CI will catch it automatically.
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-node${{ matrix.node-version }}
+          path: test-results-node${{ matrix.node-version }}.tap
+          retention-days: 7
+
+  # ─── Burn-in (flaky detection on main only) ──────────────────────────────────
+  burn-in:
+    name: Burn-in (flaky detection)
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests 5× (flaky detection)
+        run: |
+          for i in 1 2 3 4 5; do
+            echo "=== Run $i/5 ==="
+            npm test
+          done

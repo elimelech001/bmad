@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\ElimelechAharon\\\\workspace\\\\bmad\" -Recurse -Depth 2 | Where-Object { $_.Name -match '\\(package\\\\.json|README\\\\.md|CLAUDE\\\\.md|\\\\.cursorrules|tsconfig|jest|\\\\.json$\\)' } | Select-Object -First 50)"
+    ]
+  }
+}
